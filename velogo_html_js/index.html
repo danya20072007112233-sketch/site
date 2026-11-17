@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f2">
+  <title>VeloGo — аренда самокатов в Воронеже</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-mark">V</span><span>VeloGo<small>ВОРОНЕЖ</small></span></a>
+    <nav><a href="#map-section">Карта</a><a href="#scooters-section">Самокаты</a><a href="#how">Как это работает</a></nav>
+    <div class="account-actions"><span id="user-label" class="muted"></span><button class="btn btn-outline" id="auth-open">Войти</button><button class="btn btn-dark hidden" id="logout">Выйти</button></div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow"><i></i> СВОБОДА ДВИЖЕНИЯ В ГОРОДЕ</span>
+        <h1>Воронеж ближе,<br><em>чем кажется.</em></h1>
+        <p>Выбирай самокат на карте, бронируй в пару касаний и отправляйся по своим делам.</p>
+        <a class="btn btn-green" href="#map-section">Найти самокат <span>↗</span></a>
+        <div class="hero-stats"><div><b>10+</b><small>точек на карте</small></div><div><b>8 ₽</b><small>за минуту поездки</small></div><div><b>24/7</b><small>свобода маршрута</small></div></div>
+      </div>
+      <div class="hero-art"><div class="sun"></div><div class="art-circle"></div><div class="scooter-drawing"><div class="handle"></div><div class="stem"></div><div class="deck"></div><div class="wheel w1"></div><div class="wheel w2"></div></div><span class="art-label">ГОРОД<br>ТВОЙ</span></div>
+    </section>
+
+    <section id="map-section" class="section">
+      <div class="section-head"><div><span class="eyebrow">ВЫБИРАЙ МАРШРУТ</span><h2>Самокаты рядом</h2><p>Доступные самокаты на карте Воронежа</p></div><div class="map-legend"><span><i class="dot available"></i> Свободен</span><span><i class="dot busy"></i> Занят</span></div></div>
+      <div class="map-wrap"><div id="map"></div><div class="map-note">📍 Демонстрационные точки в Воронеже · © OpenStreetMap</div></div>
+    </section>
+
+    <section id="scooters-section" class="section scooters-section">
+      <div class="section-head"><div><span class="eyebrow">ТВОЙ ВЫБОР</span><h2>Доступные самокаты</h2><p>Выбери подходящий и забронируй его</p></div><div class="filter"><label for="status-filter">Показать</label><select id="status-filter"><option value="all">Все</option><option value="available">Свободные</option></select></div></div>
+      <div id="scooter-list" class="scooter-grid"></div>
+    </section>
+
+    <section id="how" class="section how-section">
+      <span class="eyebrow">ВСЁ ПРОСТО</span><h2>Три шага до поездки</h2>
+      <div class="steps"><article><b>01</b><h3>Найди</h3><p>Открой карту и выбери ближайший свободный самокат.</p></article><article><b>02</b><h3>Бронируй</h3><p>Забронируй его на 10 минут, чтобы никто не занял.</p></article><article><b>03</b><h3>Катись</h3><p>Начни поездку и заверши её, когда доберёшься до места.</p></article></div>
+    </section>
+
+    <section class="section account-section">
+      <div><span class="eyebrow">ЛИЧНЫЙ КАБИНЕТ</span><h2>Твои поездки</h2><p>История поездок и текущая бронь появятся здесь после входа.</p></div>
+      <div id="history" class="history-panel"><p class="muted">Войди в аккаунт, чтобы увидеть историю.</p></div>
+    </section>
+  </main>
+
+  <footer><a class="brand" href="#"><span class="brand-mark">V</span><span>VeloGo<small>ВОРОНЕЖ</small></span></a><span>Учебный демонстрационный проект · 2026</span><span>Тариф: 45 ₽ старт + 8 ₽/мин</span></footer>
+
+  <dialog id="auth-dialog" class="dialog">
+    <form method="dialog" class="dialog-x"><button aria-label="Закрыть">×</button></form>
+    <span class="eyebrow">ЛИЧНЫЙ КАБИНЕТ</span><h2 id="auth-title">Войти в VeloGo</h2>
+    <form id="auth-form" class="form">
+      <label>Email<input id="auth-email" type="email" autocomplete="email" placeholder="name@example.com" required></label>
+      <label>Пароль<input id="auth-password" type="password" autocomplete="current-password" minlength="6" placeholder="Не менее 6 символов" required></label>
+      <button class="btn btn-green full" id="auth-submit">Войти</button>
+    </form>
+    <p class="switch-auth"><span id="switch-text">Нет аккаунта?</span> <button id="switch-auth" class="link-btn" type="button">Зарегистрироваться</button></p>
+    <p id="auth-message" class="form-message"></p>
+    <small class="muted">Для облачной авторизации сначала настрой Supabase по инструкции в README.</small>
+  </dialog>
+
+  <dialog id="scooter-dialog" class="dialog">
+    <form method="dialog" class="dialog-x"><button aria-label="Закрыть">×</button></form>
+    <span class="eyebrow">ИНФОРМАЦИЯ О САМОКАТЕ</span><h2 id="scooter-title">Самокат</h2>
+    <div id="scooter-details"></div>
+    <button id="reserve-btn" class="btn btn-green full">Забронировать на 10 минут</button>
+    <button id="ride-btn" class="btn btn-dark full hidden">Начать поездку</button>
+    <button id="finish-btn" class="btn btn-outline full hidden">Завершить поездку</button>
+  </dialog>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
